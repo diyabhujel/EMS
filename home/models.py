@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class Event (models.Model):
   name = models.CharField(max_length=100)
   description = HTMLField()
-  dnt = models.DateField()
+  dnt = models.DateTimeField()
   venue = models.CharField(max_length=50)
   total_seats = models.IntegerField()
   organizer = models.ForeignKey(User,
@@ -14,15 +14,24 @@ class Event (models.Model):
                                 blank=True)# Create your models here.
   @property
   def seats(self):
-    total = self.totals_seats
+    total = self.total_seats
     taken = self.bookings.all().count()
     return total - taken
+  
   def __str__(self):
     return self.name
   
 class Bookings(models.Model):
-  event = models.ForeignKey(Event,on_delete=models.SET_NULL, null=True, blank= True, related_name="bookings")
-  participant =  models.ForeignKey(User,on_delete=models.SET_NULL, null=True, blank=True, related_name="bookings")
+  event = models.ForeignKey(Event,
+                            on_delete=models.SET_NULL,
+                            null=True,
+                            blank= True, 
+                            related_name="bookings")
+  participant =  models.ForeignKey(User,
+                                  on_delete=models.SET_NULL,
+                                  null=True, 
+                                  blank=True, 
+                                  related_name="bookings")
   booked_at = models.DateField(auto_now_add= True)
   updated_at = models.DateField(auto_now= True)
 
